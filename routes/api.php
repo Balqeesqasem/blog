@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,12 +18,22 @@ use App\Http\Controllers\Auth\AuthController;
 */
 
 // Public routes
-Route::post('/register', [RegisteredUserController::class, 'store']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post("/register", [RegisteredUserController::class, "store"]);
+Route::post("/login", [AuthController::class, "login"]);
 
 // Routes for authenticated users
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::get('/user', function (Request $request) {
+Route::middleware(["auth:sanctum"])->group(function () {
+    Route::get("/user", function (Request $request) {
         return $request->user();
     });
+    // Admin routes
+    Route::middleware("admin")->group(function () {
+        Route::post("/posts", [PostController::class, "store"]); // Create post
+        Route::put("/posts/{id}", [PostController::class, "update"]); // Update post
+        Route::delete("/posts/{id}", [PostController::class, "destroy"]); // Delete post
+    });
+
+    // Public routes
+    Route::get("/posts", [PostController::class, "index"]); // List posts
+    Route::get("/posts/{id}", [PostController::class, "show"]);
 });
