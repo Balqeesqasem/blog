@@ -26,6 +26,7 @@ Route::middleware(["auth:sanctum"])->group(function () {
     Route::get("/user", function (Request $request) {
         return $request->user();
     });
+
     // Admin routes
     Route::middleware("admin")->group(function () {
         Route::post("/posts", [PostController::class, "store"]); // Create post
@@ -33,7 +34,7 @@ Route::middleware(["auth:sanctum"])->group(function () {
         Route::delete("/posts/{id}", [PostController::class, "destroy"]); // Delete post
     });
 
-    // Public routes
+    // Routes accessible to all authenticated users
     Route::get("/posts", [PostController::class, "index"]); // List posts
-    Route::get("/posts/{id}", [PostController::class, "show"]);
+    Route::get("/posts/{id}", [PostController::class, "show"]); // Show single post
 });
