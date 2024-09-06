@@ -5,7 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -29,39 +29,30 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
-    }
 
-    /**
-     * Render an exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
-     * @return \Illuminate\Http\Response
-     */
-    public function render($request, Throwable $exception)
-    {
-        // Customize JSON response for model not found
-        if ($exception instanceof ModelNotFoundException) {
-            return response()->json(
-                [
-                    "message" => "Resource not found.",
-                ],
-                404
-            );
-        }
+        $this->renderable(function (Throwable $e, Request $request) {
+            if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                // Handle 401 Unauthorized response
+                return response()->json(
+                    [
+                        "message" =>
+                            "You need to log in to access this resource.",
+                    ],
+                    401
+                );
+            }
 
-        // Customize JSON response for other types of exceptions if needed
-        if ($exception instanceof \Illuminate\Validation\ValidationException) {
-            return response()->json(
-                [
-                    "message" => "Validation error.",
-                    "errors" => $exception->errors(),
-                ],
-                422
-            );
-        }
+            // Handle 403 Forbidden response
+            if ($e instanceof HttpException && $e->getStatusCode() === 403) {
+                return response()->json(
+                    [
+                        "message" => "Access denied.",
+                    ],
+                    403
+                );
+            }
 
-        // Handle other exceptions
-        return parent::render($request, $exception);
+            return parent::render($request, $e);
+        });
     }
 }
