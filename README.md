@@ -6,15 +6,15 @@ This project is a Laravel-based blog application featuring a RESTful API and a u
 
 ## The application includes two roles: Admin and User, and two models: Posts and Comments.
 
-# Admins have the ability to:
+### Admins have the ability to:
 
 Create, Update, and Delete Posts
 
-# Users have the ability to:
+### Users have the ability to:
 
 Create, Update, and Delete Comments
 
-# Both Admins and Users can:
+### Both Admins and Users can:
 
 Index and Show Posts and Comments
 
@@ -38,7 +38,7 @@ Before you begin, ensure you have the following installed:
 
    ```bash
    git clone https://github.com/Balqeesqasem/blog.git
-   cd your-repository
+   cd blog
 
 
 ## Set Up the Environment
